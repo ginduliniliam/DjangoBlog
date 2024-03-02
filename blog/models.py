@@ -3,6 +3,14 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 
+class PublishedManager(models.Manager):
+    # manager for working with published posts
+    def get_queryset(self):
+        # filters objects by status PUBLISHED
+        return super().get_queryset()\
+                      .filter(status=Post.Status.PUBLISHED)
+
+
 class Post(models.Model):
     # Post model
 
@@ -23,6 +31,8 @@ class Post(models.Model):
     status = models.CharField(max_length=2,
                               choices=Status.choices,
                               default=Status.DRAFT)  # Post status
+    objects = models.Manager()  # default manager
+    published = PublishedManager()  # application-specific manager
 
     class Meta:
         # Sorts results by publish returns in reverse chronological order
